@@ -42,15 +42,20 @@ def get_lines(glove_file_name):
     with smart_open.smart_open(glove_file_name, 'r') as f:
         num_dims = len(f.readline().split()) - 1
     return num_lines, num_dims
-	
+
+import argparse
+parser = argparse.ArgumentParser(description = 'LSTM + WordEnbedding')
+parser.add_argument("glove_file")
+parser.add_argument("gensim_file")
+args = parser.parse_args()
 # Input: GloVe Model File
 # More models can be downloaded from http://nlp.stanford.edu/projects/glove/
-glove_file="glove.6B.300d.txt"
+glove_file=args.glove_file
 
 num_lines, dims = get_lines(glove_file)
 
 # Output: Gensim Model text format.
-gensim_file='glove_model2.txt'
+gensim_file=args.gensim_file
 gensim_first_line = "{} {}".format(num_lines, dims)
 
 # Prepends the line.
@@ -60,7 +65,7 @@ else:
 	prepend_slow(glove_file, gensim_file, gensim_first_line)
 
 # Demo: Loads the newly created glove_model.txt into gensim API.
-model=gensim.models.Word2Vec.load_word2vec_format(gensim_file,binary=False) #GloVe Model
+model=gensim.models.KeyedVectors.load_word2vec_format(gensim_file,binary=False) #GloVe Model
 
-print model.most_similar(positive=['australia'], topn=10)
-print model.similarity('woman', 'man')
+print (model.most_similar(positive=['australia'], topn=10))
+print (model.similarity('woman', 'man'))
